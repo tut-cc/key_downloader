@@ -23,5 +23,7 @@ _testmain.go
 *.test
 *.prof
 
+key_downloader
+
 # Backup File
 *.go~

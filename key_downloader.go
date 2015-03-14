@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -39,22 +38,21 @@ func zipDownload(w http.ResponseWriter, r *http.Request) {
 	if i == 300 {
 		file, err := ioutil.ReadFile("test.zip")
 		if err != nil {
-			fmt.Println(err)
-			return
+			panic(err)
 		}
 
 		w.Header().Set("Content-Type", "application/zip")
 		w.WriteHeader(http.StatusOK)
 		w.Write(file)
 	} else {
-		w.Header().Set("Content-Type", "text/html")
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("test"))
+		http.Redirect(w, r, "/", http.StatusFound)
 	}
 
 }
 
 func main() {
+	http.Handle("/layout/", http.StripPrefix("/layout/", http.FileServer(http.Dir("./layout"))))
+
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/zip", zipDownload)
 	http.ListenAndServe(":8080", nil)

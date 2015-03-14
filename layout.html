@@ -3,13 +3,23 @@
   <head>
     <meta charset="UTF-8">
     <title>{{.Title}}</title>
+    <link href="./layout/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="./layout/css/bootstrap-responsive.css" rel="stylesheet">
+
   </head>
   <body>
-    <h1>Zip Downloader</h1>
+    <div class="container">
+      <h1>Zip Downloader</h1>
 
-    <form action="/zip" method="POST">
-      <div><textarea name="num" rows="1" cols="20"></textarea></div>
-      <div><input type="submit" value="Send"></div>
-    </form>
+      <form action="/zip" method="POST">
+	<div><textarea name="num" rows="1" cols="20"></textarea></div>
+	<div><input type="submit" value="Send"></div>
+      </form>
+    </div>
   </body>
 </html>
