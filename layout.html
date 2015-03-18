@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>{{.Title}}</title>
+    <title>Dowloader</title>
     <link href="./layout/css/bootstrap.css" rel="stylesheet">
     <style>
       body {
@@ -14,9 +14,9 @@
   </head>
   <body>
     <div class="container">
-      <h1>Zip Downloader</h1>
+      <h1>Download {{.Name}}</h1>
 
-      <form action="/zip" method="POST">
+      <form action="/{{.Path}}" method="POST">
 	<div>
 	  <input type="number" name="num">
 	</div>

@@ -7,27 +7,26 @@ import (
 	"text/template"
 )
 
-type Page struct {
-	Title string
+type ZipFile struct {
+	Name string
+	Path string
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	page := Page{"ZipDownloader"}
+func (z *ZipFile) Index(w http.ResponseWriter, r *http.Request) {
 	tmple, err := template.ParseFiles("layout.html")
 
 	if err != nil {
 		panic(err)
 	}
 
-	err = tmple.Execute(w, page)
+	err = tmple.Execute(w, z)
 
 	if err != nil {
 		panic(err)
 	}
-
 }
 
-func zipDownload(w http.ResponseWriter, r *http.Request) {
+func (z *ZipFile) DownloadPage(w http.ResponseWriter, r *http.Request) {
 	num := r.FormValue("num")
 	i, err := strconv.Atoi(num)
 
@@ -36,7 +35,7 @@ func zipDownload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if i == 300 {
-		file, err := ioutil.ReadFile("test.zip")
+		file, err := ioutil.ReadFile(z.Path)
 		if err != nil {
 			panic(err)
 		}
@@ -53,7 +52,9 @@ func zipDownload(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.Handle("/layout/", http.StripPrefix("/layout/", http.FileServer(http.Dir("./layout"))))
 
-	http.HandleFunc("/", handler)
-	http.HandleFunc("/zip", zipDownload)
+	zip := ZipFile{"test", "test.zip"}
+	http.HandleFunc("/", zip.Index)
+	http.HandleFunc("/"+zip.Path, zip.DownloadPage)
+
 	http.ListenAndServe(":8080", nil)
 }
