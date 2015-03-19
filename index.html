@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Dowloader</title>
+    <link href="./layout/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="./layout/css/bootstrap-responsive.css" rel="stylesheet">
+
+  </head>
+  <body>
+    <div class="container">
+      {{range .List}}
+        <a href="/{{.Name}}"><h3>{{.Name}}</h3></a>
+      {{end}}
+    </div>
+  </body>
+</html>
