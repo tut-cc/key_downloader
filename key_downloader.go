@@ -49,12 +49,18 @@ func (z *ZipFile) DownloadPage(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (z *ZipFile) DownloadPath() string {
+	buf := z.Name
+	buf = "/" + buf + ".zip"
+	return buf
+}
+
 func main() {
 	http.Handle("/layout/", http.StripPrefix("/layout/", http.FileServer(http.Dir("./layout"))))
 
 	zip := ZipFile{"test", "test.zip"}
 	http.HandleFunc("/", zip.Index)
-	http.HandleFunc("/"+zip.Name+".zip", zip.DownloadPage)
+	http.HandleFunc(zip.DownloadPath(), zip.DownloadPage)
 
 	http.ListenAndServe(":8080", nil)
 }
