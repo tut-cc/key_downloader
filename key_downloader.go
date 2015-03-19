@@ -54,7 +54,7 @@ func main() {
 
 	zip := ZipFile{"test", "test.zip"}
 	http.HandleFunc("/", zip.Index)
-	http.HandleFunc("/"+zip.Path, zip.DownloadPage)
+	http.HandleFunc("/"+zip.Name+".zip", zip.DownloadPage)
 
 	http.ListenAndServe(":8080", nil)
 }
