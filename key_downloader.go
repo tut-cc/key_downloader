@@ -10,6 +10,7 @@ import (
 type ZipFile struct {
 	Name string
 	Path string
+	Fun  func(int) bool
 }
 
 type ZipList struct {
@@ -52,7 +53,7 @@ func (z *ZipFile) DownloadPage(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	if i == 300 {
+	if z.Fun(i) {
 		file, err := ioutil.ReadFile(z.Path)
 		if err != nil {
 			panic(err)
@@ -62,7 +63,7 @@ func (z *ZipFile) DownloadPage(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write(file)
 	} else {
-		http.Redirect(w, r, "/", http.StatusFound)
+		http.Redirect(w, r, "/"+z.Name, http.StatusFound)
 	}
 
 }
@@ -73,10 +74,14 @@ func (z *ZipFile) DownloadPath() string {
 	return buf
 }
 
+func check(i int) bool {
+	return i == 300
+}
+
 func main() {
 	http.Handle("/layout/", http.StripPrefix("/layout/", http.FileServer(http.Dir("./layout"))))
 
-	zip := ZipFile{"test", "test.zip"}
+	zip := ZipFile{"test", "test.zip", check}
 	zipList := ZipList{
 		[]ZipFile{zip},
 	}
