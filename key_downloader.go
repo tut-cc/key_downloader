@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -21,13 +22,15 @@ func (z *ZipList) Index(w http.ResponseWriter, r *http.Request) {
 	tmple, err := template.ParseFiles("index.html")
 
 	if err != nil {
-		panic(err)
+		fmt.Errorf(err.Error())
+		return
 	}
 
 	err = tmple.Execute(w, z)
 
 	if err != nil {
-		panic(err)
+		fmt.Errorf(err.Error())
+		return
 	}
 }
 
@@ -35,13 +38,15 @@ func (z *ZipFile) ItemIndex(w http.ResponseWriter, r *http.Request) {
 	tmple, err := template.ParseFiles("layout.html")
 
 	if err != nil {
-		panic(err)
+		fmt.Errorf(err.Error())
+		return
 	}
 
 	err = tmple.Execute(w, z)
 
 	if err != nil {
-		panic(err)
+		fmt.Errorf(err.Error())
+		return
 	}
 }
 
@@ -50,13 +55,15 @@ func (z *ZipFile) DownloadPage(w http.ResponseWriter, r *http.Request) {
 	i, err := strconv.Atoi(num)
 
 	if err != nil {
-		panic(err)
+		fmt.Errorf(err.Error())
+		return
 	}
 
 	if z.Fun(i) {
 		file, err := ioutil.ReadFile(z.Path)
 		if err != nil {
-			panic(err)
+			fmt.Errorf(err.Error())
+			return
 		}
 
 		w.Header().Set("Content-Type", "application/zip")
