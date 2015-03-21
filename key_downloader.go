@@ -11,7 +11,7 @@ import (
 type ZipFile struct {
 	Name string
 	Path string
-	Fun  func(int) bool
+	Fun  func(string) bool
 }
 
 type ZipList struct {
@@ -52,14 +52,8 @@ func (z *ZipFile) ItemIndex(w http.ResponseWriter, r *http.Request) {
 
 func (z *ZipFile) DownloadPage(w http.ResponseWriter, r *http.Request) {
 	num := r.FormValue("num")
-	i, err := strconv.Atoi(num)
 
-	if err != nil {
-		fmt.Errorf(err.Error())
-		return
-	}
-
-	if z.Fun(i) {
+	if z.Fun(num) {
 		file, err := ioutil.ReadFile(z.Path)
 		if err != nil {
 			fmt.Errorf(err.Error())
@@ -81,7 +75,13 @@ func (z *ZipFile) DownloadPath() string {
 	return buf
 }
 
-func check(i int) bool {
+func check(num string) bool {
+	i, err := strconv.Atoi(num)
+
+	if err != nil {
+		fmt.Errorf(err.Error())
+	}
+
 	return i == 300
 }
 
