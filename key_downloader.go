@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bitbucket.org/kimitoboku/go-PollarRho"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -85,10 +86,29 @@ func check(num string) bool {
 	return i == 300
 }
 
+func checkPrim(num string) bool {
+	i, err := strconv.Atoi(num)
+	if err != nil {
+		fmt.Errorf(err.Error())
+	}
+
+	list := pollarrho.Factor(i)
+	if len(list) == 3 {
+		for _, num := range list {
+			if num > 10000 || num < 999 {
+				return false
+			}
+		}
+		return true
+	} else {
+		return false
+	}
+}
+
 func main() {
 	http.Handle("/layout/", http.StripPrefix("/layout/", http.FileServer(http.Dir("./layout"))))
 
-	zip := ZipFile{"test", "test.zip", check}
+	zip := ZipFile{"test", "test.zip", checkPrim}
 	zipList := ZipList{
 		[]ZipFile{zip},
 	}
