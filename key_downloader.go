@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/kimitoboku/go-PollarRho"
 	"fmt"
+	"github.com/kimitoboku/go-PollarRho"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -90,6 +90,7 @@ func checkPrim(num string) bool {
 	i, err := strconv.Atoi(num)
 	if err != nil {
 		fmt.Errorf(err.Error())
+		return false
 	}
 
 	list := pollarrho.Factor(i)
