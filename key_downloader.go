@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bitbucket.org/kimitoboku/go-PollarRho"
+	"github.com/kimitoboku/go-PollarRho"
 	"fmt"
 	"io/ioutil"
 	"net/http"
