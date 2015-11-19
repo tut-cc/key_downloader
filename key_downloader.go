@@ -1,18 +1,25 @@
 package main
 
 import (
+	"bufio"
+	"container/list"
 	"fmt"
-	"github.com/kimitoboku/go-PollarRho"
+	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
-	"strconv"
+	"os"
 	"text/template"
+)
+
+var (
+	logger *log.Logger
 )
 
 type ZipFile struct {
 	Name string
 	Path string
-	Fun  func(string) bool
+	Key  *list.List
 }
 
 type ZipList struct {
@@ -54,7 +61,7 @@ func (z *ZipFile) ItemIndex(w http.ResponseWriter, r *http.Request) {
 func (z *ZipFile) DownloadPage(w http.ResponseWriter, r *http.Request) {
 	num := r.FormValue("num")
 
-	if z.Fun(num) {
+	if z.check(num) {
 		file, err := ioutil.ReadFile(z.Path)
 		if err != nil {
 			fmt.Errorf(err.Error())
@@ -76,44 +83,56 @@ func (z *ZipFile) DownloadPath() string {
 	return buf
 }
 
-func check(num string) bool {
-	i, err := strconv.Atoi(num)
+func (z *ZipFile) check(key string) bool {
 
-	if err != nil {
-		fmt.Errorf(err.Error())
+	for e := z.Key.Front(); e != nil; e = e.Next() {
+		if key == fmt.Sprintf("%s", e.Value) {
+			logger.Printf("Succces full : %s", key)
+			return true
+		}
 	}
-
-	return i == 300
+	logger.Printf("Fail : %s", key)
+	return false
 }
 
-func checkPrim(num string) bool {
-	i, err := strconv.Atoi(num)
+func logSetUp() {
+	f, err := os.OpenFile("/tmp/test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		fmt.Errorf(err.Error())
-		return false
+		fmt.Println(err)
 	}
 
-	list := pollarrho.Factor(i)
-	if len(list) == 3 {
-		for _, num := range list {
-			if num > 10000 || num < 999 {
-				return false
-			}
-		}
-		return true
-	} else {
-		return false
+	logger = log.New(f, "logger: ", log.Lshortfile)
+
+}
+
+func KeyListGen(file string) *list.List {
+	key := list.New()
+	fp, err := os.Open(file)
+	if err != nil {
+		fmt.Println(err)
 	}
+
+	reader := bufio.NewReaderSize(fp, 4096)
+	for {
+		line, _, err := reader.ReadLine()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			panic(err)
+		}
+		key.PushBack(line)
+	}
+	return key
 }
 
 func main() {
-	http.Handle("/layout/", http.StripPrefix("/layout/", http.FileServer(http.Dir("./layout"))))
-
-	zip := ZipFile{"test", "test.zip", checkPrim}
+	key := KeyListGen("./download_key")
+	zip := ZipFile{"test", "test.zip", key}
 	zipList := ZipList{
 		[]ZipFile{zip},
 	}
 
+	http.Handle("/layout/", http.StripPrefix("/layout/", http.FileServer(http.Dir("./layout"))))
 	http.HandleFunc("/", zipList.Index)
 
 	for i := 0; i < len(zipList.List); i++ {
