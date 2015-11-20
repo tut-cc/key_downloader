@@ -10,6 +10,25 @@
       }
     </style>
     <link href="./layout/css/bootstrap-responsive.css" rel="stylesheet">
+    <script type="text/javascript">
+
+      var param = get_url_vars();
+      if(param["error"] == "1"){
+      document.open();
+      document.writeln("<div class='alert alert-warning' role='alert'><strong>warning</strong>:パスワードが間違っています</div>")
+      document.close();
+      }
+      function get_url_vars()
+      {
+      var vars = new Object, params;
+      var temp_params = window.location.search.substring(1).split('&');
+      for(var i = 0; i <temp_params.length; i++) {
+      params = temp_params[i].split('=');
+      vars[params[0]] = params[1];
+      }
+      return vars;
+      }
+    </script>
 
   </head>
   <body>

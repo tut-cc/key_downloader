@@ -72,7 +72,7 @@ func (z *ZipFile) DownloadPage(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write(file)
 	} else {
-		http.Redirect(w, r, "/"+z.Name, http.StatusFound)
+		http.Redirect(w, r, "/"+z.Name+"?error=1", http.StatusFound)
 	}
 
 }
@@ -93,16 +93,6 @@ func (z *ZipFile) check(key string) bool {
 	}
 	logger.Printf("Fail : %s", key)
 	return false
-}
-
-func logSetUp() {
-	f, err := os.OpenFile("/tmp/test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	logger = log.New(f, "logger: ", log.Lshortfile)
-
 }
 
 func KeyListGen(file string) *list.List {
@@ -126,6 +116,13 @@ func KeyListGen(file string) *list.List {
 }
 
 func main() {
+	f, err := os.OpenFile("./log.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	logger = log.New(f, "logger: ", log.Lshortfile)
+
 	key := KeyListGen("./download_key")
 	zip := ZipFile{"test", "test.zip", key}
 	zipList := ZipList{

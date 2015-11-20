@@ -26,3 +26,4 @@ _testmain.go
 # Project Original
 *.go~
 key_downloader
+log.log
